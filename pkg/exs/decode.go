@@ -96,6 +96,7 @@ func NewFromReader(r *bytes.Reader, name string) (*EXS, error) {
 		string(header.Magic[:]) != "JBOS" {
 		return nil, errors.New("not an exs file")
 	}
+	klog.V(2).Infof(">>>>>>> %+s <<<<<<<<<", exs.Name)
 	klog.V(5).Infof("Magic: %s", header.Magic)
 	if bytes.Equal(header.Magic[:], []byte("SOBT")) {
 		exs.BigEndian = true
@@ -384,7 +385,7 @@ func (exs *EXS) readZone(reader *bytes.Reader, pos int) (*Zone, error) {
 		ExsZone:         exsZone,
 		Name:            getString64(exsZone.Name),
 		Pitch:           exsZone.Opts&0x02 == 0,
-		OneShot:         exsZone.Opts&0x01 != 0,
+		OneShot:         (exsZone.Opts & (1 << 0)) != 0,
 		Reverse:         exsZone.Opts&0x04 != 0,
 		VelocityRangeOn: exsZone.Opts&0x08 != 0,
 		LoopOn:          exsZone.LoopOpts&0x01 != 0,
@@ -401,14 +402,14 @@ type ExsGroup struct {
 	Volume    int8     // 84
 	Pan       int8     // 85
 	Polyphony int8     // 86
-	Decay     int8     // 87
+	Decay     uint8    // 87
 	Exclusive int8     // 88
 	VelLow    uint8    // 89
 	VelHigh   uint8    // 90
-	_         [9]byte
-	DecayTime uint32 // 100
-	_         [20]byte
-	Cutoff    int8 // 125
+	_         [9]byte  //91
+	DecayTime uint32   // 100
+	_         [21]byte // 104
+	Cutoff    int8     // 125
 	_         [1]byte
 	Resonance int8 // 127
 	_         [12]byte
@@ -417,13 +418,19 @@ type ExsGroup struct {
 	Decay2       int32 // 144
 	Sustain2     int32 // 148
 	Release2     int32 // 152
-	_            [9]byte
-	SelectGroup  int32 // 164
-	SelectType   uint8 // 168
+	_            [1]byte
+	Trigger      int8 // 157
+	Output       int8 // 158
+	_            [5]byte
+	SelectGroup  int32 // 164  exsSequence
+	SelectType   uint8 // 168 < 0:-- 1:Note 2:Group 3:Control 4:Bend 5:Midi Channel 6:Articulation ID 7:Tempo
 	SelectNumber uint8 // 169
 	SelectHigh   uint8 // 170
 	SelectLow    uint8 // 171
-	_            [12]byte
+	KeyLow       uint8 // 172
+	KeyHigh      uint8 // 173
+	_            [6]byte
+	Hold2        int32 // 180
 	// ADSR 1
 	Attack1  int32 // 184
 	Decay1   int32 // 188

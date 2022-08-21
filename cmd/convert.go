@@ -39,6 +39,6 @@ func init() {
 	rootCmd.AddCommand(convertCmd)
 	convertCmd.Flags().StringVarP(&searchPath, "search-path", "p", "", "search path for exs files and samples")
 	convertCmd.Flags().StringVarP(&outputPath, "output-path", "o", "", "output path for key group files")
-	convertCmd.Flags().IntVarP(&layersPerInstrument, "layers-per-instrument", "l", 1, "number of layers per instrument")
+	convertCmd.Flags().IntVarP(&layersPerInstrument, "layers-per-instrument", "l", 4, "number of layers per instrument")
 	convertCmd.Flags().BoolVarP(&skipErrors, "skip-errors", "s", true, "skip errors")
 }

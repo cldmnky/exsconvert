@@ -1,16 +1,20 @@
 package exs
 
+import "k8s.io/klog"
+
 func (exs *EXS) ReadSequences() error {
 
 	for i := int32(0); i < int32(len(exs.Groups)); i++ {
 		group := exs.Groups[i]
-		if group.SelectGroup == -1 {
-			continue
-		}
+		klog.V(2).Infof("group %d: %s selectGroup: %d\n", i, group.Name, group.SelectGroup)
+		//if group.SelectGroup == -1 {
+		//	continue
+		//}
 		foundInSequence := false
 		for _, sequence := range exs.Sequences {
 			if contains(sequence, i) {
 				foundInSequence = true
+				klog.V(2).Infof("found in sequence %d: %+v\n", i, sequence)
 				break
 			}
 		}
@@ -26,6 +30,7 @@ func (exs *EXS) ReadSequences() error {
 			for j := int32(0); j < int32(len(exs.Groups)); j++ {
 				g := exs.Groups[j]
 				if g.SelectGroup == gid && (j != g.SelectGroup) && !contains(sequence, gid) {
+					klog.V(2).Infof("adding %d to sequence\n", gid)
 					sequence = append(sequence, gid)
 					gid = j
 					cont = true
@@ -34,7 +39,9 @@ func (exs *EXS) ReadSequences() error {
 			}
 		}
 		// now that we're at the start of the chain, simply follow it to the end
-		for gid != -1 && !contains(sequence, gid) {
+		sequence = []int32{}
+		for gid != int32(-1) && !contains(sequence, gid) {
+			klog.V(2).Infof("gid: %d\n", gid)
 			sequence = append([]int32{gid}, sequence...)
 			gid = exs.Groups[gid].SelectGroup
 		}

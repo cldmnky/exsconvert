@@ -21,7 +21,7 @@ var _ = Describe("Exs", func() {
 		//Expect(err).To(BeNil())
 		//_, err = exs.NewExsFromFile("testdata/80sThreats.exs")
 		//Expect(err).To(BeNil())
-		exs, err := exs.NewFromFile("testdata/Big News (slow sweeps).exs")
+		exs, err := exs.NewFromFile("testdata/Hi Hat 909 Clean.exs")
 		Expect(err).To(BeNil())
 		Expect(exs.BigEndian).To(BeFalse())
 	})

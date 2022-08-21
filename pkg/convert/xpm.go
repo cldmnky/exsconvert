@@ -162,7 +162,7 @@ func (x *XPM) toXPM(exsFile *exs.EXS, destPath string) error {
 
 	groups := exsFile.GetGroups()
 	for _, group := range groups {
-		klog.V(2).Infof("group: %s", group.Name)
+		klog.V(2).Infof("group: %s, id: %d, selectgroup: %d, sequences: %+v, selectType: %d, selectNumber: %d", group.Name, group.ID, group.SelectGroup, exsFile.Sequences, group.SelectType, group.SelectNumber)
 	}
 	if len(groups) > 1 {
 		klog.Infof("group: %s", groups[0].Name)
