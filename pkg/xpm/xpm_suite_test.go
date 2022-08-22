@@ -7,7 +7,7 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-func TestExs(t *testing.T) {
+func TestXPM(t *testing.T) {
 	RegisterFailHandler(Fail)
 	RunSpecs(t, "XPM Suite")
 }

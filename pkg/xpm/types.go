@@ -24,7 +24,7 @@ type AudioRoute struct {
 	AudioRoute              int    `xml:"AudioRoute"`
 	AudioRouteSubIndex      int    `xml:"AudioRouteSubIndex"`
 	AudioRouteChannelBitmap int    `xml:"AudioRouteChannelBitmap"`
-	InsertsEnabled          bool   `xml:"InsertsEnabled"`
+	InsertsEnabled          string `xml:"InsertsEnabled"`
 }
 
 type Instruments struct {
@@ -33,11 +33,11 @@ type Instruments struct {
 }
 
 type LFO struct {
-	Text  string  `xml:",chardata"`
-	Type  string  `xml:"Type"`
-	Rate  float32 `xml:"Rate"`
-	Sync  int     `xml:"Sync"`
-	Reset bool    `xml:"Reset"`
+	Text  string `xml:",chardata"`
+	Type  string `xml:"Type"`
+	Rate  string `xml:"Rate"`
+	Sync  int    `xml:"Sync"`
+	Reset string `xml:"Reset"`
 }
 
 type Layers struct {
@@ -46,60 +46,60 @@ type Layers struct {
 }
 
 type Layer struct {
-	Text                     string  `xml:",chardata"`
-	Number                   string  `xml:"number,attr"`
-	Active                   bool    `xml:"Active"`
-	Volume                   float32 `xml:"Volume"`
-	Pan                      float32 `xml:"Pan"`
-	Pitch                    float32 `xml:"Pitch"`
-	TuneCoarse               int     `xml:"TuneCoarse"`
-	TuneFine                 int     `xml:"TuneFine"`
-	VelStart                 int     `xml:"VelStart"`
-	VelEnd                   int     `xml:"VelEnd"`
-	SampleStart              int     `xml:"SampleStart"`
-	SampleEnd                int     `xml:"SampleEnd"`
-	Loop                     bool    `xml:"Loop"`
-	LoopStart                int     `xml:"LoopStart"`
-	LoopEnd                  int     `xml:"LoopEnd"`
-	LoopCrossfadeLength      int     `xml:"LoopCrossfadeLength"`
-	LoopTune                 int     `xml:"LoopTune"`
-	Mute                     bool    `xml:"Mute"`
-	RootNote                 int     `xml:"RootNote"`
-	KeyTrack                 bool    `xml:"KeyTrack"`
-	SampleName               string  `xml:"SampleName"`
-	SampleFile               string  `xml:"SampleFile"`
-	SliceIndex               int     `xml:"SliceIndex"`
-	Direction                int     `xml:"Direction"`
-	Offset                   int     `xml:"Offset"`
-	SliceStart               int     `xml:"SliceStart"`
-	SliceEnd                 int     `xml:"SliceEnd"`
-	SliceLoopStart           int     `xml:"SliceLoopStart"`
-	SliceLoop                int     `xml:"SliceLoop"`
-	SliceLoopCrossFadeLength int     `xml:"SliceLoopCrossFadeLength"`
+	Text                     string `xml:",chardata"`
+	Number                   string `xml:"number,attr"`
+	Active                   string `xml:"Active"`
+	Volume                   string `xml:"Volume"`
+	Pan                      string `xml:"Pan"`
+	Pitch                    string `xml:"Pitch"`
+	TuneCoarse               int    `xml:"TuneCoarse"`
+	TuneFine                 int    `xml:"TuneFine"`
+	VelStart                 int    `xml:"VelStart"`
+	VelEnd                   int    `xml:"VelEnd"`
+	SampleStart              int    `xml:"SampleStart"`
+	SampleEnd                int    `xml:"SampleEnd"`
+	Loop                     string `xml:"Loop"`
+	LoopStart                int    `xml:"LoopStart"`
+	LoopEnd                  int    `xml:"LoopEnd"`
+	LoopCrossfadeLength      int    `xml:"LoopCrossfadeLength"`
+	LoopTune                 int    `xml:"LoopTune"`
+	Mute                     string `xml:"Mute"`
+	RootNote                 int    `xml:"RootNote"`
+	KeyTrack                 string `xml:"KeyTrack"`
+	SampleName               string `xml:"SampleName"`
+	SampleFile               string `xml:"SampleFile"`
+	SliceIndex               int    `xml:"SliceIndex"`
+	Direction                int    `xml:"Direction"`
+	Offset                   int    `xml:"Offset"`
+	SliceStart               int    `xml:"SliceStart"`
+	SliceEnd                 int    `xml:"SliceEnd"`
+	SliceLoopStart           int    `xml:"SliceLoopStart"`
+	SliceLoop                int    `xml:"SliceLoop"`
+	SliceLoopCrossFadeLength int    `xml:"SliceLoopCrossFadeLength"`
 }
 
 type Instrument struct {
 	Text                     string     `xml:",chardata"`
 	Number                   string     `xml:"number,attr"`
-	CueBusEnable             bool       `xml:"CueBusEnable"`
+	CueBusEnable             string     `xml:"CueBusEnable"`
 	AudioRoute               AudioRoute `xml:"AudioRoute"`
-	Send1                    float32    `xml:"Send1"`
-	Send2                    float32    `xml:"Send2"`
-	Send3                    float32    `xml:"Send3"`
-	Send4                    float32    `xml:"Send4"`
-	Volume                   float32    `xml:"Volume"`
-	Mute                     bool       `xml:"Mute"`
-	Solo                     bool       `xml:"Solo"`
-	Pan                      float32    `xml:"Pan"`
+	Send1                    string     `xml:"Send1"`
+	Send2                    string     `xml:"Send2"`
+	Send3                    string     `xml:"Send3"`
+	Send4                    string     `xml:"Send4"`
+	Volume                   string     `xml:"Volume"`
+	Mute                     string     `xml:"Mute"`
+	Solo                     string     `xml:"Solo"`
+	Pan                      string     `xml:"Pan"`
 	AutomationFilter         int        `xml:"AutomationFilter"`
 	TuneCoarse               int        `xml:"TuneCoarse"`
 	TuneFine                 int        `xml:"TuneFine"`
-	Mono                     bool       `xml:"Mono"`
+	Mono                     string     `xml:"Mono"`
 	Polyphony                int        `xml:"Polyphony"`
-	FilterKeytrack           float32    `xml:"FilterKeytrack"`
+	FilterKeytrack           string     `xml:"FilterKeytrack"`
 	LowNote                  int        `xml:"LowNote"`
 	HighNote                 int        `xml:"HighNote"`
-	IgnoreBaseNote           bool       `xml:"IgnoreBaseNote"`
+	IgnoreBaseNote           string     `xml:"IgnoreBaseNote"`
 	ZonePlay                 int        `xml:"ZonePlay"`
 	MuteGroup                int        `xml:"MuteGroup"`
 	MuteTarget1              int        `xml:"MuteTarget1"`
@@ -110,42 +110,42 @@ type Instrument struct {
 	SimultTarget2            int        `xml:"SimultTarget2"`
 	SimultTarget3            int        `xml:"SimultTarget3"`
 	SimultTarget4            int        `xml:"SimultTarget4"`
-	LfoPitch                 float32    `xml:"LfoPitch"`
-	LfoCutoff                float32    `xml:"LfoCutoff"`
-	LfoVolume                float32    `xml:"LfoVolume"`
-	LfoPan                   float32    `xml:"LfoPan"`
-	OneShot                  bool       `xml:"OneShot"`
+	LfoPitch                 string     `xml:"LfoPitch"`
+	LfoCutoff                string     `xml:"LfoCutoff"`
+	LfoVolume                string     `xml:"LfoVolume"`
+	LfoPan                   string     `xml:"LfoPan"`
+	OneShot                  string     `xml:"OneShot"`
 	FilterType               int        `xml:"FilterType"`
-	Cutoff                   float32    `xml:"Cutoff"`
-	Resonance                float32    `xml:"Resonance"`
-	FilterEnvAmt             float32    `xml:"FilterEnvAmt"`
-	AfterTouchToFilter       float32    `xml:"AfterTouchToFilter"`
-	VelocityToStart          float32    `xml:"VelocityToStart"`
-	VelocityToFilterAttack   float32    `xml:"VelocityToFilterAttack"`
-	VelocityToFilter         float32    `xml:"VelocityToFilter"`
-	VelocityToFilterEnvelope float32    `xml:"VelocityToFilterEnvelope"`
-	FilterAttack             float32    `xml:"FilterAttack"`
-	FilterDecay              float32    `xml:"FilterDecay"`
-	FilterSustain            float32    `xml:"FilterSustain"`
-	FilterRelease            float32    `xml:"FilterRelease"`
-	FilterHold               float32    `xml:"FilterHold"`
-	FilterDecayType          bool       `xml:"FilterDecayType"`
-	FilterADEnvelope         bool       `xml:"FilterADEnvelope"`
-	VolumeHold               float32    `xml:"VolumeHold"`
-	VolumeDecayType          bool       `xml:"VolumeDecayType"`
-	VolumeADEnvelope         bool       `xml:"VolumeADEnvelope"`
-	VolumeAttack             float32    `xml:"VolumeAttack"`
-	VolumeDecay              float32    `xml:"VolumeDecay"`
-	VolumeSustain            float32    `xml:"VolumeSustain"`
-	VolumeRelease            float32    `xml:"VolumeRelease"`
-	VelocityToPitch          float32    `xml:"VelocityToPitch"`
-	VelocityToVolumeAttack   float32    `xml:"VelocityToVolumeAttack"`
-	VelocitySensitivity      float32    `xml:"VelocitySensitivity"`
-	VelocityToPan            float32    `xml:"VelocityToPan"`
+	Cutoff                   string     `xml:"Cutoff"`
+	Resonance                string     `xml:"Resonance"`
+	FilterEnvAmt             string     `xml:"FilterEnvAmt"`
+	AfterTouchToFilter       string     `xml:"AfterTouchToFilter"`
+	VelocityToStart          string     `xml:"VelocityToStart"`
+	VelocityToFilterAttack   string     `xml:"VelocityToFilterAttack"`
+	VelocityToFilter         string     `xml:"VelocityToFilter"`
+	VelocityToFilterEnvelope string     `xml:"VelocityToFilterEnvelope"`
+	FilterAttack             string     `xml:"FilterAttack"`
+	FilterDecay              string     `xml:"FilterDecay"`
+	FilterSustain            string     `xml:"FilterSustain"`
+	FilterRelease            string     `xml:"FilterRelease"`
+	FilterHold               string     `xml:"FilterHold"`
+	FilterDecayType          string     `xml:"FilterDecayType"`
+	FilterADEnvelope         string     `xml:"FilterADEnvelope"`
+	VolumeHold               string     `xml:"VolumeHold"`
+	VolumeDecayType          string     `xml:"VolumeDecayType"`
+	VolumeADEnvelope         string     `xml:"VolumeADEnvelope"`
+	VolumeAttack             string     `xml:"VolumeAttack"`
+	VolumeDecay              string     `xml:"VolumeDecay"`
+	VolumeSustain            string     `xml:"VolumeSustain"`
+	VolumeRelease            string     `xml:"VolumeRelease"`
+	VelocityToPitch          string     `xml:"VelocityToPitch"`
+	VelocityToVolumeAttack   string     `xml:"VelocityToVolumeAttack"`
+	VelocitySensitivity      string     `xml:"VelocitySensitivity"`
+	VelocityToPan            string     `xml:"VelocityToPan"`
 	LFO                      LFO        `xml:"LFO"`
-	WarpTempo                float32    `xml:"WarpTempo"`
-	BpmLock                  bool       `xml:"BpmLock"`
-	WarpEnable               bool       `xml:"WarpEnable"`
+	WarpTempo                string     `xml:"WarpTempo"`
+	BpmLock                  string     `xml:"BpmLock"`
+	WarpEnable               string     `xml:"WarpEnable"`
 	StretchPercentage        int        `xml:"StretchPercentage"`
 	Layers                   Layers     `xml:"Layers"`
 }
@@ -160,36 +160,36 @@ type Program struct {
 	ProgramName string             `xml:"ProgramName"`
 	ProgramPads ProgramPadsContent `xml:"ProgramPads"`
 	//ProgramPadsContent string     `xml:",innerxml"`
-	CueBusEnable bool       `xml:"CueBusEnable"`
+	CueBusEnable string     `xml:"CueBusEnable"`
 	AudioRoute   AudioRoute `xml:"AudioRoute"`
 
-	Send1                      float32     `xml:"Send1"`
-	Send2                      float32     `xml:"Send2"`
-	Send3                      float32     `xml:"Send3"`
-	Send4                      float32     `xml:"Send4"`
-	Volume                     float32     `xml:"Volume"`
-	Mute                       bool        `xml:"Mute"`
-	Solo                       bool        `xml:"Solo"`
-	Pan                        float32     `xml:"Pan"`
+	Send1                      string      `xml:"Send1"`
+	Send2                      string      `xml:"Send2"`
+	Send3                      string      `xml:"Send3"`
+	Send4                      string      `xml:"Send4"`
+	Volume                     string      `xml:"Volume"`
+	Mute                       string      `xml:"Mute"`
+	Solo                       string      `xml:"Solo"`
+	Pan                        string      `xml:"Pan"`
 	AutomationFilter           int         `xml:"AutomationFilter"`
-	Pitch                      float32     `xml:"Pitch"`
+	Pitch                      string      `xml:"Pitch"`
 	TuneCoarse                 int         `xml:"TuneCoarse"`
 	TuneFine                   int         `xml:"TuneFine"`
-	Mono                       bool        `xml:"Mono"`
+	Mono                       string      `xml:"Mono"`
 	ProgramPolyphony           int         `xml:"Program_Polyphony"`
-	PortamentoTime             float32     `xml:"PortamentoTime"`
-	PortamentoLegato           bool        `xml:"PortamentoLegato"`
-	PortamentoQuantized        bool        `xml:"PortamentoQuantized"`
+	PortamentoTime             string      `xml:"PortamentoTime"`
+	PortamentoLegato           string      `xml:"PortamentoLegato"`
+	PortamentoQuantized        string      `xml:"PortamentoQuantized"`
 	ProgramXfaderRoute         int         `xml:"Program.Xfader.Route"`
 	Instruments                Instruments `xml:"Instruments"`
 	PadNoteMap                 PadNoteMap  `xml:"PadNoteMap"`
 	PadGroupMap                PadGroupMap `xml:"PadGroupMap"`
-	KeygroupMasterTranspose    float32     `xml:"KeygroupMasterTranspose"`
+	KeygroupMasterTranspose    string      `xml:"KeygroupMasterTranspose"`
 	KeygroupNumKeygroups       int         `xml:"KeygroupNumKeygroups"`
-	KeygroupPitchBendRange     float32     `xml:"KeygroupPitchBendRange"`
-	KeygroupWheelToLfo         float32     `xml:"KeygroupWheelToLfo"`
-	KeygroupAftertouchToFilter float32     `xml:"KeygroupAftertouchToFilter"`
-	QLinkAssignments           float32     `xml:"QLinkAssignments"`
+	KeygroupPitchBendRange     string      `xml:"KeygroupPitchBendRange"`
+	KeygroupWheelToLfo         string      `xml:"KeygroupWheelToLfo"`
+	KeygroupAftertouchToFilter string      `xml:"KeygroupAftertouchToFilter"`
+	QLinkAssignments           string      `xml:"QLinkAssignments"`
 }
 
 type PadNoteMap struct {

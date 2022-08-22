@@ -183,11 +183,11 @@ func (x *XPM) toXPM(exsFile *exs.EXS, destPath string) error {
 		for _, zones := range zoneMap {
 			keyGroup.Program.Instruments.Instrument[j].LowNote = int(zones[0].KeyLow)
 			keyGroup.Program.Instruments.Instrument[j].HighNote = int(zones[0].KeyHigh)
-			keyGroup.Program.Instruments.Instrument[j].Resonance = float32(g.Resonance)
-			keyGroup.Program.Instruments.Instrument[j].VolumeAttack = normalizeValue(float64(g.Attack2), 0, 30)
-			keyGroup.Program.Instruments.Instrument[j].VolumeDecay = normalizeValue(float64(g.Decay2), 0, 30)
-			keyGroup.Program.Instruments.Instrument[j].VolumeSustain = normalizeValue(float64(g.Sustain2), 0, 30)
-			keyGroup.Program.Instruments.Instrument[j].VolumeRelease = normalizeValue(float64(g.Release2), 0, 30)
+			keyGroup.Program.Instruments.Instrument[j].Resonance = normalizeValue(float64(g.Resonance), 0, 9999)
+			keyGroup.Program.Instruments.Instrument[j].VolumeAttack = normalizeValue(float64(g.Attack2), 0, 9999)
+			keyGroup.Program.Instruments.Instrument[j].VolumeDecay = normalizeValue(float64(g.Decay2), 0, 9999)
+			keyGroup.Program.Instruments.Instrument[j].VolumeSustain = normalizeValue(float64(g.Sustain2), 0, 9999)
+			keyGroup.Program.Instruments.Instrument[j].VolumeRelease = normalizeValue(float64(g.Release2), 0, 9999)
 			keyGroup.Program.Instruments.Instrument[j].Volume = convertGain(float64(g.Volume))
 			klog.V(2).Infof("Instrument: %s, LowNote: %d, HighNote: %d\n", keyGroup.Program.Instruments.Instrument[j].Number, keyGroup.Program.Instruments.Instrument[j].LowNote, keyGroup.Program.Instruments.Instrument[j].HighNote)
 			for i, zone := range zones {
@@ -228,19 +228,28 @@ func Btoi(b bool) int {
 	return 0
 }
 
-func convertGain(volumeDB float64) float32 {
+func convertGain(volumeDB float64) string {
 	if volumeDB > 6 {
 		volumeDB = 6
 	}
-	f := 0.35300
+	if volumeDB < -12 {
+		volumeDB = -12
+	}
+	/*
+			private static final double MINUS_12_DB  = 0.353000;
+		    private static final double PLUS_6_DB    = 1.0;
+		    private static final double VALUE_RANGE  = PLUS_6_DB - MINUS_12_DB;
+	*/
 	v := 12 + volumeDB
-	return float32(f + ((1 - f) * v / 18.0))
+	res := (1 - 0.353000) * v / 18
+	return fmt.Sprintf("%.6f", 0.353000+res)
+	//return fmt.Sprintf("%.6f", math.Pow(10, volumeDB/20))
 }
 
 func clamp(value, minimum, maximum float64) float64 {
 	return math.Max(minimum, math.Min(value, maximum))
 }
 
-func normalizeValue(value, minimum, maximum float64) float32 {
-	return float32(clamp(value, minimum, maximum) / maximum)
+func normalizeValue(value, minimum, maximum float64) string {
+	return fmt.Sprintf("%.6f", clamp(value, minimum, maximum)/maximum)
 }
