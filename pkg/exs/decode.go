@@ -125,6 +125,8 @@ func NewFromReader(r *bytes.Reader, name string) (*EXS, error) {
 	if err != nil {
 		return nil, err
 	}
+	ranges := exs.GetZonesByKeyRanges(4)
+	fmt.Print(ranges)
 	return exs, nil
 }
 
@@ -170,7 +172,7 @@ func (exs *EXS) GetZonesByKeyRanges(zonesPerRange int) []map[string][]*Zone {
 			zones = make(map[string][]*Zone)
 		}
 		// check if the zone has samples
-		for s, _ := range exs.Samples {
+		for s := range exs.Samples {
 			if int(zone.SampleIndex) == s {
 				hasSamples = true
 				break
@@ -197,6 +199,26 @@ func (exs *EXS) GetZonesByKeyRanges(zonesPerRange int) []map[string][]*Zone {
 				end = len(zone)
 			}
 			ranges = append(ranges, map[string][]*Zone{s: zone[i:end]})
+		}
+	}
+	keys := make([]string, 0, len(ranges))
+	for k := range ranges {
+		for _, z := range ranges[k] {
+			for _, zone := range z {
+				keys = append(keys, fmt.Sprintf("%d-%d", zone.KeyLow, zone.KeyHigh))
+			}
+		}
+	}
+	sort.Strings(keys)
+	fmt.Println(keys)
+	for _, k := range keys {
+		for _, z := range ranges {
+
+			// sort ranges
+			sort.Slice(z[k], func(i, j int) bool {
+				return z[k][i].VelLow < z[k][j].VelLow
+			})
+
 		}
 	}
 	return ranges

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
@@ -108,6 +109,11 @@ func (x *XPM) copySample(name, destPath string) (string, error) {
 		return fmt.Sprintf("%s%s", fileName, strings.ToUpper(ext))
 	}
 
+	var toSampleName = func(fileName string) string {
+		ext := filepath.Ext(fileName)
+		return fileName[:len(fileName)-len(ext)]
+	}
+
 	src := samples[0]
 	dst := filepath.Join(destPath, filepath.Base(toUpperExt(src)))
 	in, err := os.Open(src)
@@ -131,11 +137,12 @@ func (x *XPM) copySample(name, destPath string) (string, error) {
 		return "", err
 	}
 
-	return toUpperExt(name), nil
+	return toSampleName(name), nil
 }
 
 func (x *XPM) toXPM(exsFile *exs.EXS, destPath string) error {
 	keyGroup := xpm.NewXPMKeygroup()
+	keyGroup.Program.Type = "Keygroup"
 	z := exsFile.GetZonesByKeyRanges(x.LayersPerInstrument)
 	for s, zoneMap := range z {
 		klog.V(5).Infof("zoneMap: %d", s)
@@ -177,11 +184,11 @@ func (x *XPM) toXPM(exsFile *exs.EXS, destPath string) error {
 			keyGroup.Program.Instruments.Instrument[j].LowNote = int(zones[0].KeyLow)
 			keyGroup.Program.Instruments.Instrument[j].HighNote = int(zones[0].KeyHigh)
 			keyGroup.Program.Instruments.Instrument[j].Resonance = float32(g.Resonance)
-			keyGroup.Program.Instruments.Instrument[j].VolumeAttack = float32(g.Attack1)
-			keyGroup.Program.Instruments.Instrument[j].VolumeDecay = float32(g.Decay1)
-			keyGroup.Program.Instruments.Instrument[j].VolumeSustain = float32(g.Sustain1)
-			keyGroup.Program.Instruments.Instrument[j].VolumeRelease = float32(g.Release1)
-			keyGroup.Program.Instruments.Instrument[j].Volume = float32(g.Volume)
+			keyGroup.Program.Instruments.Instrument[j].VolumeAttack = normalizeValue(float64(g.Attack2), 0, 30)
+			keyGroup.Program.Instruments.Instrument[j].VolumeDecay = normalizeValue(float64(g.Decay2), 0, 30)
+			keyGroup.Program.Instruments.Instrument[j].VolumeSustain = normalizeValue(float64(g.Sustain2), 0, 30)
+			keyGroup.Program.Instruments.Instrument[j].VolumeRelease = normalizeValue(float64(g.Release2), 0, 30)
+			keyGroup.Program.Instruments.Instrument[j].Volume = convertGain(float64(g.Volume))
 			klog.V(2).Infof("Instrument: %s, LowNote: %d, HighNote: %d\n", keyGroup.Program.Instruments.Instrument[j].Number, keyGroup.Program.Instruments.Instrument[j].LowNote, keyGroup.Program.Instruments.Instrument[j].HighNote)
 			for i, zone := range zones {
 				sampleName := strings.TrimSpace(exsFile.Samples[zone.SampleIndex].FileName)
@@ -192,14 +199,14 @@ func (x *XPM) toXPM(exsFile *exs.EXS, destPath string) error {
 				// layers
 				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].VelStart = int(zone.VelLow)
 				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].VelEnd = int(zone.VelHigh)
-				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].SampleFile = xpmSampleName
-				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].SampleStart = int(zone.SampleStart)
-				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].SampleEnd = int(zone.SampleEnd)
-				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].Loop = zone.LoopOn
-				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].LoopStart = int(zone.LoopStart)
+				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].SampleName = xpmSampleName
+				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].SliceStart = int(zone.SampleStart)
+				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].SliceEnd = int(zone.SampleEnd)
+				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].SliceLoop = Btoi(zone.LoopOn)
+				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].SliceLoopStart = int(zone.LoopStart)
 				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].LoopEnd = int(zone.LoopEnd)
 				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].RootNote = int(zone.Key)
-				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].LoopCrossfadeLength = int(zone.LoopCrossfade)
+				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].SliceLoopCrossFadeLength = int(zone.LoopCrossfade)
 				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].Offset = int(zone.Offset)
 				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].LoopTune = int(zone.LoopTune)
 				keyGroup.Program.Instruments.Instrument[j].Layers.Layer[i].TuneCoarse = int(zone.CoarseTuning)
@@ -212,4 +219,28 @@ func (x *XPM) toXPM(exsFile *exs.EXS, destPath string) error {
 
 	keyGroup.Program.KeygroupNumKeygroups = len(z)
 	return keyGroup.Save(destPath + "/" + g.Name + ".xpm")
+}
+
+func Btoi(b bool) int {
+	if b {
+		return 1
+	}
+	return 0
+}
+
+func convertGain(volumeDB float64) float32 {
+	if volumeDB > 6 {
+		volumeDB = 6
+	}
+	f := 0.35300
+	v := 12 + volumeDB
+	return float32(f + ((1 - f) * v / 18.0))
+}
+
+func clamp(value, minimum, maximum float64) float64 {
+	return math.Max(minimum, math.Min(value, maximum))
+}
+
+func normalizeValue(value, minimum, maximum float64) float32 {
+	return float32(clamp(value, minimum, maximum) / maximum)
 }
