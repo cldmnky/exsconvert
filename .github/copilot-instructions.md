@@ -217,7 +217,7 @@ When modifying code:
 These instructions have been validated by:
 - Building from clean state
 - Running all tests
-- Testing code formatting and vetting
+- Testing code formatting and static analysis
 - Verifying build times and outputs
 - Testing the built binary
 
