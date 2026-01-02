@@ -153,9 +153,9 @@ go test ./...
 - Many tests are commented out (/* ... */) in the test files - this is intentional
 
 ### Binary Naming
-- The built binary is called `exsconvert`
-- The CLI tool identifies itself as `exs2mpc` (see cmd/root.go line 18)
-- Both names refer to the same tool
+- The built binary file is named `exsconvert` (this is what you build and run, for example: `./exsconvert --help`)
+- The Cobra root command defined in `cmd/root.go` is named `exs2mpc`, so usage/help text and error messages will show `exs2mpc` as the command name
+- This difference is intentional: you should always invoke the tool as `exsconvert`, but seeing `exs2mpc` in help output is expected and refers to the same tool
 
 ### Dependencies
 - **Cobra**: CLI framework (github.com/spf13/cobra)
