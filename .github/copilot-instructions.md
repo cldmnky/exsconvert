@@ -212,6 +212,29 @@ When modifying code:
 3. **XML generation** (`pkg/xpm/`): Maintain XML structure compatibility with MPC format
 4. **CLI changes** (`cmd/`): Update help text and flag descriptions appropriately
 
+## Definition of Done
+
+A code change is considered complete when:
+- [ ] Code compiles without errors (`go build .`)
+- [ ] All tests pass (`go test ./...`)
+- [ ] Code is formatted (`go fmt ./...`)
+- [ ] Static analysis passes (`go vet ./...`)
+- [ ] Binary runs without errors (for CLI changes)
+- [ ] Relevant documentation is updated
+- [ ] No sensitive data or secrets committed
+
+## Environment Notes
+
+- **Local Development**: Standard Go development environment
+- **GitHub Actions**: When Copilot runs in CI, it uses a containerized environment with Go pre-installed
+- **No External Dependencies**: All builds are self-contained via go.mod
+
+## Working with Copilot
+
+- **Iterative Feedback**: Review PRs and use @copilot mentions in PR comments to request changes
+- **Well-Scoped Issues**: Provide clear problem statements with specific acceptance criteria
+- **Start Small**: Begin with focused tasks like bug fixes or feature additions to a single package
+
 ## Trust These Instructions
 
 These instructions have been validated by:
