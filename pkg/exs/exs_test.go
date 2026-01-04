@@ -9,21 +9,27 @@ import (
 var _ = Describe("Exs", func() {
 	//var err error
 	It("should load exs files", func() {
-		//_, err = exs.NewExsFromFile("testdata/MC-202 bass.exs")
-		//Expect(err).To(BeNil())
-		//_, err = exs.NewExsFromFile("testdata/Big News (slow sweeps).exs")
-		//Expect(err).To(BeNil())
-		//_, err = exs.NewExsFromFile("testdata/K3 Big.exs")
-		//Expect(err).To(BeNil())
-		//_, err = exs.NewExsFromFile("testdata/filter-DFAM-WFM-LP.exs")
-		//Expect(err).To(BeNil())
-		//_, err = exs.NewExsFromFile("testdata/MC-202 bass.exs")
-		//Expect(err).To(BeNil())
-		//_, err = exs.NewExsFromFile("testdata/80sThreats.exs")
-		//Expect(err).To(BeNil())
+		_, err := exs.NewFromFile("testdata/MC-202 bass.exs")
+		Expect(err).To(BeNil())
+		_, err = exs.NewFromFile("testdata/Big News (slow sweeps).exs")
+		Expect(err).To(BeNil())
+		_, err = exs.NewFromFile("testdata/K3 Big.exs")
+		Expect(err).To(BeNil())
+		_, err = exs.NewFromFile("testdata/filter-DFAM-WFM-LP.exs")
+		Expect(err).To(BeNil())
+		_, err = exs.NewFromFile("testdata/Shape-DFAM-PSEQOUT.exs")
+		Expect(err).To(BeNil())
 		exs, err := exs.NewFromFile("testdata/Hi Hat 909 Clean.exs")
 		Expect(err).To(BeNil())
 		Expect(exs.BigEndian).To(BeFalse())
+		Expect(exs.Instrument).ToNot(BeNil())
+		Expect(len(exs.Zones)).To(BeNumerically(">", 0))
+		for _, zone := range exs.Zones {
+			// Check that new fields are parsed (even if default values)
+			_ = zone.LoopEndRelease
+			_ = zone.PlayMode
+			_ = zone.HasOutput
+		}
 	})
 
 	/* 	It("should detect endianness", func() {

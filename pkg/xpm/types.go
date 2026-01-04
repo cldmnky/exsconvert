@@ -33,11 +33,21 @@ type Instruments struct {
 }
 
 type LFO struct {
-	Text  string `xml:",chardata"`
-	Type  string `xml:"Type"`
-	Rate  string `xml:"Rate"`
-	Sync  int    `xml:"Sync"`
-	Reset string `xml:"Reset"`
+	Text         string `xml:",chardata"`
+	Type         string `xml:"Type"`
+	Rate         string `xml:"Rate"`
+	Sync         int    `xml:"Sync"`
+	Reset        string `xml:"Reset"`
+	PitchAmount  string `xml:"PitchAmount"`
+	CutoffAmount string `xml:"CutoffAmount"`
+	VolumeAmount string `xml:"VolumeAmount"`
+	PanAmount    string `xml:"PanAmount"`
+	Delay        string `xml:"Delay"`
+	FadeIn       string `xml:"FadeIn"`
+	Attack       string `xml:"Attack"`
+	Depth        string `xml:"Depth"`
+	Phase        string `xml:"Phase"`
+	Offset       string `xml:"Offset"`
 }
 
 type Layers struct {
@@ -100,7 +110,7 @@ type Instrument struct {
 	LowNote                  int        `xml:"LowNote"`
 	HighNote                 int        `xml:"HighNote"`
 	IgnoreBaseNote           string     `xml:"IgnoreBaseNote"`
-	ZonePlay                 int        `xml:"ZonePlay"`
+	ZonePlay                 int        `xml:"ZonePlay"` // 0=CYCLE (round robin), 1=VELOCITY, 2=RANDOM
 	MuteGroup                int        `xml:"MuteGroup"`
 	MuteTarget1              int        `xml:"MuteTarget1"`
 	MuteTarget2              int        `xml:"MuteTarget2"`
@@ -131,6 +141,9 @@ type Instrument struct {
 	FilterHold               string     `xml:"FilterHold"`
 	FilterDecayType          string     `xml:"FilterDecayType"`
 	FilterADEnvelope         string     `xml:"FilterADEnvelope"`
+	FilterAttackCurve        string     `xml:"FilterAttackCurve"`
+	FilterDecayCurve         string     `xml:"FilterDecayCurve"`
+	FilterReleaseCurve       string     `xml:"FilterReleaseCurve"`
 	VolumeHold               string     `xml:"VolumeHold"`
 	VolumeDecayType          string     `xml:"VolumeDecayType"`
 	VolumeADEnvelope         string     `xml:"VolumeADEnvelope"`
@@ -138,10 +151,23 @@ type Instrument struct {
 	VolumeDecay              string     `xml:"VolumeDecay"`
 	VolumeSustain            string     `xml:"VolumeSustain"`
 	VolumeRelease            string     `xml:"VolumeRelease"`
+	VolumeAttackCurve        string     `xml:"VolumeAttackCurve"`
+	VolumeDecayCurve         string     `xml:"VolumeDecayCurve"`
+	VolumeReleaseCurve       string     `xml:"VolumeReleaseCurve"`
+	PitchAttack              string     `xml:"PitchAttack"`
+	PitchHold                string     `xml:"PitchHold"`
+	PitchDecay               string     `xml:"PitchDecay"`
+	PitchSustain             string     `xml:"PitchSustain"`
+	PitchRelease             string     `xml:"PitchRelease"`
+	PitchAttackCurve         string     `xml:"PitchAttackCurve"`
+	PitchDecayCurve          string     `xml:"PitchDecayCurve"`
+	PitchReleaseCurve        string     `xml:"PitchReleaseCurve"`
+	PitchEnvAmount           string     `xml:"PitchEnvAmount"`
 	VelocityToPitch          string     `xml:"VelocityToPitch"`
 	VelocityToVolumeAttack   string     `xml:"VelocityToVolumeAttack"`
 	VelocitySensitivity      string     `xml:"VelocitySensitivity"`
 	VelocityToPan            string     `xml:"VelocityToPan"`
+	TriggerMode              int        `xml:"TriggerMode"`
 	LFO                      LFO        `xml:"LFO"`
 	WarpTempo                string     `xml:"WarpTempo"`
 	BpmLock                  string     `xml:"BpmLock"`
@@ -163,33 +189,33 @@ type Program struct {
 	CueBusEnable string     `xml:"CueBusEnable"`
 	AudioRoute   AudioRoute `xml:"AudioRoute"`
 
-	Send1                      string      `xml:"Send1"`
-	Send2                      string      `xml:"Send2"`
-	Send3                      string      `xml:"Send3"`
-	Send4                      string      `xml:"Send4"`
-	Volume                     string      `xml:"Volume"`
-	Mute                       string      `xml:"Mute"`
-	Solo                       string      `xml:"Solo"`
-	Pan                        string      `xml:"Pan"`
-	AutomationFilter           int         `xml:"AutomationFilter"`
-	Pitch                      string      `xml:"Pitch"`
-	TuneCoarse                 int         `xml:"TuneCoarse"`
-	TuneFine                   int         `xml:"TuneFine"`
-	Mono                       string      `xml:"Mono"`
-	ProgramPolyphony           int         `xml:"Program_Polyphony"`
-	PortamentoTime             string      `xml:"PortamentoTime"`
-	PortamentoLegato           string      `xml:"PortamentoLegato"`
-	PortamentoQuantized        string      `xml:"PortamentoQuantized"`
-	ProgramXfaderRoute         int         `xml:"Program.Xfader.Route"`
-	Instruments                Instruments `xml:"Instruments"`
-	PadNoteMap                 PadNoteMap  `xml:"PadNoteMap"`
-	PadGroupMap                PadGroupMap `xml:"PadGroupMap"`
-	KeygroupMasterTranspose    string      `xml:"KeygroupMasterTranspose"`
-	KeygroupNumKeygroups       int         `xml:"KeygroupNumKeygroups"`
-	KeygroupPitchBendRange     string      `xml:"KeygroupPitchBendRange"`
-	KeygroupWheelToLfo         string      `xml:"KeygroupWheelToLfo"`
-	KeygroupAftertouchToFilter string      `xml:"KeygroupAftertouchToFilter"`
-	QLinkAssignments           string      `xml:"QLinkAssignments"`
+	Send1                      string       `xml:"Send1"`
+	Send2                      string       `xml:"Send2"`
+	Send3                      string       `xml:"Send3"`
+	Send4                      string       `xml:"Send4"`
+	Volume                     string       `xml:"Volume"`
+	Mute                       string       `xml:"Mute"`
+	Solo                       string       `xml:"Solo"`
+	Pan                        string       `xml:"Pan"`
+	AutomationFilter           int          `xml:"AutomationFilter"`
+	Pitch                      string       `xml:"Pitch"`
+	TuneCoarse                 int          `xml:"TuneCoarse"`
+	TuneFine                   int          `xml:"TuneFine"`
+	Mono                       string       `xml:"Mono"`
+	ProgramPolyphony           int          `xml:"Program_Polyphony"`
+	PortamentoTime             string       `xml:"PortamentoTime"`
+	PortamentoLegato           string       `xml:"PortamentoLegato"`
+	PortamentoQuantized        string       `xml:"PortamentoQuantized"`
+	ProgramXfaderRoute         int          `xml:"Program.Xfader.Route"`
+	Instruments                Instruments  `xml:"Instruments"`
+	PadNoteMap                 *PadNoteMap  `xml:"PadNoteMap,omitempty"`
+	PadGroupMap                *PadGroupMap `xml:"PadGroupMap,omitempty"`
+	KeygroupMasterTranspose    string       `xml:"KeygroupMasterTranspose"`
+	KeygroupNumKeygroups       int          `xml:"KeygroupNumKeygroups"`
+	KeygroupPitchBendRange     string       `xml:"KeygroupPitchBendRange"`
+	KeygroupWheelToLfo         string       `xml:"KeygroupWheelToLfo"`
+	KeygroupAftertouchToFilter string       `xml:"KeygroupAftertouchToFilter"`
+	QLinkAssignments           string       `xml:"QLinkAssignments"`
 }
 
 type PadNoteMap struct {

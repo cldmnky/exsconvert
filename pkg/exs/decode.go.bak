@@ -272,9 +272,9 @@ func (exs *EXS) GetGroups() []*Group {
 // - Many zones have OneShot enabled
 // - Zones are NOT contiguous/chromatic (would indicate a sampled instrument)
 func (exs *EXS) IsDrumProgram() bool {
-	klog.V(1).Infof("IsDrumProgram() called for %s with %d zones", exs.Name, len(exs.Zones))
+	klog.V(2).Infof("IsDrumProgram() called for %s with %d zones", exs.Name, len(exs.Zones))
 	if len(exs.Zones) == 0 {
-		klog.V(1).Infof("IsDrumProgram() returning false: no zones")
+		klog.V(2).Infof("IsDrumProgram() returning false: no zones")
 		return false
 	}
 
@@ -283,7 +283,7 @@ func (exs *EXS) IsDrumProgram() bool {
 	totalValidZones := 0
 	keyNotes := make(map[int8]bool) // Track which key notes are used
 
-	klog.V(1).Infof("Starting zone iteration (%d zones)", len(exs.Zones))
+	klog.V(2).Infof("Starting zone iteration (%d zones)", len(exs.Zones))
 	for _, zone := range exs.Zones {
 		// Skip zones without samples
 		if zone.SampleIndex == -1 || int(zone.SampleIndex) >= len(exs.Samples) {
@@ -330,7 +330,7 @@ func (exs *EXS) IsDrumProgram() bool {
 			}
 		}
 
-		klog.V(1).Infof("Chromatic detection: minKey=%d, maxKey=%d, range=%d keys", minKey, maxKey, int(maxKey)-int(minKey)+1)
+		klog.V(2).Infof("Chromatic detection: minKey=%d, maxKey=%d, range=%d keys", minKey, maxKey, int(maxKey)-int(minKey)+1)
 
 		// Count how many consecutive keys are present
 		consecutiveKeys := 0
@@ -353,22 +353,21 @@ func (exs *EXS) IsDrumProgram() bool {
 		}
 	}
 
-	klog.V(1).Infof("Drum detection: %d/%d single-note zones (%.0f%%), %d/%d one-shot zones (%.0f%%), chromatic: %v",
+	klog.V(2).Infof("Drum detection: %d/%d single-note zones (%.0f%%), %d/%d one-shot zones (%.0f%%), chromatic: %v",
 		singleNoteCount, totalValidZones, singleNotePercent*100,
 		oneShotCount, totalValidZones, oneShotPercent*100, isChromatic)
 
-	// If more than 50% of zones are single-note or very narrow, it's likely a drum kit
-	// OR if more than 40% are one-shot, it's likely drums
-	if singleNotePercent >= 0.5 || oneShotPercent >= 0.4 {
-		klog.V(1).Infof("Detected drum program")
-		return true
+	// Chromatic instruments should NOT be detected as drums
+	if isChromatic {
+		klog.V(2).Infof("Detected chromatic instrument (not drum)")
+		return false
 	}
 
-	// Chromatic instruments should NOT be detected as drums
-	// UNLESS they have 100% single-note zones, which is a strong indicator of drums
-	if isChromatic && singleNotePercent < 1.0 {
-		klog.V(1).Infof("Detected chromatic instrument (not drum)")
-		return false
+	// If more than 70% of zones are single-note or very narrow, it's likely a drum kit
+	// OR if more than 60% are one-shot, it's likely drums
+	if singleNotePercent >= 0.7 || oneShotPercent >= 0.6 {
+		klog.V(2).Infof("Detected drum program")
+		return true
 	}
 
 	return false
@@ -402,7 +401,7 @@ func (exs *EXS) readChunks(r *bytes.Reader) error {
 				return err
 			}
 			exs.Zones = append(exs.Zones, zone)
-			klog.V(2).Infof("Zone: %s, size: %d, keyLow: %d, keyHigh: %d, key: %d, sample: %d", zone.Name, header.Size, zone.KeyLow, zone.KeyHigh, zone.Key, zone.SampleIndex)
+			klog.V(2).Infof("Zone: %s, size: %d, keyLow: %d, keyHigh: %d, sample: %d", zone.Name, header.Size, zone.KeyLow, zone.KeyHigh, zone.SampleIndex)
 		case groupChunk:
 			klog.V(5).Infof("Exs chunk type: %d (group), size: %d",
 				chunkType,
@@ -1001,6 +1000,10 @@ func NewParamsFromExsParams(exsParams *ExsParams) *Params {
 			params.InvertVia[9] = value != 0
 		case 233:
 			params.Invert[0] = value != 0
+		case 405: // ENV1_ATK_CURVE = 0x195
+			params.Env1AttackCurve = value
+		case 409: // ENV2_ATK_CURVE (approximation based on offset pattern)
+			params.Env2AttackCurve = value
 		case 234:
 			params.Invert[1] = value != 0
 		case 235:

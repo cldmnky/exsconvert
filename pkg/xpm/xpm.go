@@ -344,3 +344,169 @@ func (xpm *MPCVObject) Save(file string) error {
 	_, err = f.Write(out)
 	return err
 }
+
+// NewXPMDrum creates a new MPC Drum program template.
+// Drum programs are used for drum kits where each pad triggers a single sample
+// at a fixed pitch (one sample per MIDI note/pad).
+func NewXPMDrum() *MPCVObject {
+	xpm := &MPCVObject{}
+	xpm.Version = Version{
+		FileVersion:        "2.1",
+		Application:        "MPC-V",
+		ApplicationVersion: "2.11.3.5",
+		Platform:           "Linux",
+	}
+	xpm.Program = Program{
+		Type:        "Drum",
+		ProgramName: "",
+		ProgramPads: ProgramPadsContent{
+			Content: programPads,
+		},
+		CueBusEnable: "False",
+		AudioRoute: AudioRoute{
+			AudioRoute:              2,
+			AudioRouteSubIndex:      0,
+			AudioRouteChannelBitmap: 3,
+			InsertsEnabled:          "True",
+		},
+		Send1:                      "0.000000",
+		Send2:                      "0.000000",
+		Send3:                      "0.000000",
+		Send4:                      "0.000000",
+		Volume:                     "0.707946",
+		Mute:                       "False",
+		Solo:                       "False",
+		Pan:                        "0.500000",
+		AutomationFilter:           1,
+		Pitch:                      "0.000000",
+		TuneCoarse:                 0,
+		TuneFine:                   0,
+		Mono:                       "False",
+		ProgramPolyphony:           0,
+		PortamentoTime:             "0.000000",
+		PortamentoLegato:           "False",
+		PortamentoQuantized:        "False",
+		ProgramXfaderRoute:         0,
+		KeygroupMasterTranspose:    "0.500000",
+		KeygroupNumKeygroups:       0,
+		KeygroupPitchBendRange:     "0.000000", // No pitch bend for drums
+		KeygroupWheelToLfo:         "0.000000",
+		KeygroupAftertouchToFilter: "0.000000",
+	}
+
+	// Initialize PadNoteMap for drum programs (pads 1-128)
+	padNotes := make([]PadNote, 128)
+	for i := 0; i < 128; i++ {
+		padNotes[i] = PadNote{
+			Number: fmt.Sprintf("%d", i+1),
+			Note:   i, // MIDI note 0-127
+		}
+	}
+	xpm.Program.PadNoteMap = &PadNoteMap{
+		PadNote: padNotes,
+	}
+
+	// Initialize PadGroupMap for drum programs
+	xpm.Program.PadGroupMap = &PadGroupMap{}
+
+	// Initialize instruments for drum pads (128 pads)
+	instruments := make([]Instrument, 128)
+	for i := 0; i < 128; i++ {
+		instruments[i] = Instrument{
+			Number:       fmt.Sprintf("%d", i+1),
+			CueBusEnable: "False",
+			AudioRoute: AudioRoute{
+				AudioRoute:              0,
+				AudioRouteSubIndex:      0,
+				AudioRouteChannelBitmap: 3,
+				InsertsEnabled:          "True",
+			},
+			Send1:            "0.000000",
+			Send2:            "0.000000",
+			Send3:            "0.000000",
+			Send4:            "0.000000",
+			Volume:           "0.707946",
+			Mute:             "False",
+			Solo:             "False",
+			Pan:              "0.500000",
+			AutomationFilter: 1,
+			TuneCoarse:       0,
+			TuneFine:         0,
+			Mono:             "False",
+			Polyphony:        1, // Drums typically monophonic per pad
+			FilterKeytrack:   "False",
+			// For drums, no LowNote/HighNote - each pad is a single note
+			// The note is defined in PadNoteMap
+			IgnoreBaseNote:         "False", // Drums should use base note
+			ZonePlay:               0,
+			MuteGroup:              0,
+			LfoPitch:               "0.000000",
+			LfoCutoff:              "0.000000",
+			LfoVolume:              "0.000000",
+			LfoPan:                 "0.000000",
+			TriggerMode:            0, // One-shot for drums
+			FilterType:             0,
+			Cutoff:                 "1.000000",
+			Resonance:              "0.000000",
+			FilterEnvAmt:           "0.500000",
+			VelocityToFilter:       "0.000000",
+			FilterAttack:           "0.000000",
+			FilterHold:             "0.000000",
+			FilterDecay:            "0.000000",
+			FilterSustain:          "1.000000",
+			FilterRelease:          "0.000000",
+			FilterAttackCurve:      "0.500000",
+			FilterDecayCurve:       "0.500000",
+			FilterReleaseCurve:     "0.500000",
+			VolumeHold:             "0.000000",
+			VolumeAttack:           "0.000000",
+			VolumeDecay:            "0.000000",
+			VolumeSustain:          "1.000000",
+			VolumeRelease:          "0.005000",
+			VolumeAttackCurve:      "0.500000",
+			VolumeDecayCurve:       "0.500000",
+			VolumeReleaseCurve:     "0.500000",
+			PitchAttack:            "0.000000",
+			PitchHold:              "0.000000",
+			PitchDecay:             "0.000000",
+			PitchSustain:           "0.500000",
+			PitchRelease:           "0.000000",
+			PitchAttackCurve:       "0.500000",
+			PitchDecayCurve:        "0.500000",
+			PitchReleaseCurve:      "0.500000",
+			PitchEnvAmount:         "0.500000",
+			VelocityToPitch:        "0.000000",
+			VelocityToVolumeAttack: "0.000000",
+			VelocitySensitivity:    "0.500000",
+			VelocityToPan:          "0.000000",
+			LFO: LFO{
+				Type:         "Sine",
+				Rate:         "0.250000",
+				Sync:         0,
+				Reset:        "Free",
+				PitchAmount:  "0.000000",
+				CutoffAmount: "0.000000",
+				VolumeAmount: "0.000000",
+				PanAmount:    "0.000000",
+				Delay:        "0.000000",
+				FadeIn:       "0.000000",
+				Attack:       "0.000000",
+				Depth:        "1.000000",
+				Phase:        "0.000000",
+				Offset:       "0.000000",
+			},
+			WarpTempo:         "0.000000",
+			BpmLock:           "False",
+			WarpEnable:        "False",
+			StretchPercentage: 100,
+			Layers: Layers{
+				Layer: []Layer{},
+			},
+		}
+	}
+	xpm.Program.Instruments = Instruments{
+		Instrument: instruments,
+	}
+
+	return xpm
+}
