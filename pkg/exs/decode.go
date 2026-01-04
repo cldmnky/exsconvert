@@ -76,7 +76,7 @@ type Sample struct {
 }
 
 // ============================================================================
-// Binary Format Types (internal representations)
+// Binary Header Types (internal representations for file/chunk headers)
 // ============================================================================
 
 // ExsHeader represents the file header structure.
