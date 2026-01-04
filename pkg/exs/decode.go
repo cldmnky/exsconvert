@@ -14,6 +14,10 @@ import (
 	"k8s.io/klog"
 )
 
+// ============================================================================
+// Constants
+// ============================================================================
+
 const (
 	headerChunk  = uint32(0x00)
 	zoneChunk    = uint32(0x01)
@@ -23,6 +27,11 @@ const (
 	plistChunk   = uint32(0x0B)
 )
 
+// ============================================================================
+// Public Types
+// ============================================================================
+
+// EXS represents a parsed Logic Pro EXS24 sampler instrument file.
 type EXS struct {
 	Name           string
 	BigEndian      bool
@@ -36,6 +45,7 @@ type EXS struct {
 	Instrument     *ExsInstrument
 }
 
+// Zone represents a zone in the EXS24 file.
 type Zone struct {
 	ExsZone
 	Name            string
@@ -50,12 +60,14 @@ type Zone struct {
 	HasOutput       bool
 }
 
+// Group represents a group in the EXS24 file.
 type Group struct {
 	ExsGroup
 	Name  string
 	Decay bool
 }
 
+// Sample represents a sample in the EXS24 file.
 type Sample struct {
 	ExsSample
 	Name     string
@@ -63,6 +75,11 @@ type Sample struct {
 	Path     string
 }
 
+// ============================================================================
+// Binary Format Types (internal representations)
+// ============================================================================
+
+// ExsHeader represents the file header structure.
 type ExsHeader struct {
 	_     [4]byte
 	Size  uint32
@@ -70,12 +87,18 @@ type ExsHeader struct {
 	Magic [4]byte
 }
 
+// ExsChunkHeader represents a chunk header in the EXS file.
 type ExsChunkHeader struct {
 	Signature uint32
 	Size      uint32
 	Magic     [4]byte
 }
 
+// ============================================================================
+// Constructors
+// ============================================================================
+
+// NewFromFile creates a new EXS from a file.
 func NewFromFile(fileName string) (*EXS, error) {
 	file, err := os.ReadFile(fileName)
 	if err != nil {
@@ -133,6 +156,10 @@ func NewFromReader(r *bytes.Reader, name string) (*EXS, error) {
 	return exs, nil
 }
 
+// ============================================================================
+// EXS Methods - Binary Readers (internal)
+// ============================================================================
+
 // readSize reads the size of the exs file.
 func (exs *EXS) readSize(r *bytes.Reader) (int, error) {
 	// get the size of the reader
@@ -160,7 +187,11 @@ func (exs *EXS) readHeader(r *bytes.Reader) (*ExsHeader, error) {
 	return &header, nil
 }
 
-// getZonesByKeyRange returns the zones that are in the given key range.
+// ============================================================================
+// EXS Methods - Public API
+// ============================================================================
+
+// GetZonesByKeyRanges returns the zones that are in the given key range.
 func (exs *EXS) GetZonesByKeyRanges(zonesPerRange int) []map[string][]*Zone {
 	var zones map[string][]*Zone
 
@@ -468,6 +499,7 @@ func (exs *EXS) readChunkHeader(r *bytes.Reader) (*ExsChunkHeader, error) {
 	return &header, nil
 }
 
+// ExsZone represents the binary structure of a zone.
 type ExsZone struct {
 	_             [8]byte
 	ID            uint32 // 8
@@ -538,6 +570,7 @@ func (exs *EXS) readZone(reader *bytes.Reader, pos int) (*Zone, error) {
 	return zone, nil
 }
 
+// ExsGroup represents the binary structure of a group.
 type ExsGroup struct {
 	_         [8]byte
 	ID        uint32 // 8
@@ -608,6 +641,7 @@ func (exs *EXS) readGroup(reader *bytes.Reader, pos int) (*Group, error) {
 	return group, nil
 }
 
+// ExsSample represents the binary structure of a sample.
 type ExsSample struct {
 	_        [8]byte
 	ID       uint32 // 8
@@ -624,7 +658,7 @@ type ExsSample struct {
 	FileName [256]byte // 420
 }
 
-// readSampole reads the sample data.
+// readSample reads the sample data.
 func (exs *EXS) readSample(reader *bytes.Reader, pos int) (*Sample, error) {
 	_, err := reader.Seek(int64(pos), io.SeekStart)
 	if err != nil {
@@ -651,6 +685,7 @@ func (exs *EXS) readSample(reader *bytes.Reader, pos int) (*Sample, error) {
 	}, nil
 }
 
+// ExsParams represents the binary structure of parameters.
 type ExsParams struct {
 	_      [8]byte
 	ID     uint32 // 8
@@ -661,6 +696,7 @@ type ExsParams struct {
 	Values [100]int16
 }
 
+// ExsInstrument represents the binary structure of instrument metadata.
 type ExsInstrument struct {
 	_          [4]byte
 	NumZones   uint32
@@ -710,6 +746,7 @@ func (exs *EXS) readInstrument(reader *bytes.Reader, pos int) (*ExsInstrument, e
 	return &instrument, nil
 }
 
+// Params represents the parsed parameters from ExsParams.
 type Params struct {
 	// Global
 	OutputVolume  int16 ///< [-60,0]dB default:-6
@@ -782,6 +819,7 @@ type Params struct {
 	Bypass      [10]bool
 }
 
+// NewParamsFromExsParams converts ExsParams to Params by mapping binary keys to structured fields.
 func NewParamsFromExsParams(exsParams *ExsParams) *Params {
 	params := &Params{}
 	i := 0
